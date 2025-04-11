@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { Product } from '@/types';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Star, Heart } from 'lucide-react';
+import { useWishlist } from '@/contexts/WishlistContext';
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +15,19 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // Get first color's first image as default display image
   const displayImage = product.colors[0]?.images[0] || '';
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const inWishlist = isInWishlist(product.id);
+  
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product detail
+    e.stopPropagation();
+    
+    if (inWishlist) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
   
   return (
     <Link to={`/product/${product.id}`} className="block no-underline">
@@ -23,6 +38,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             alt={product.name} 
             className="w-full h-full object-cover"
           />
+          
+          {/* Wishlist button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-2 right-2 bg-white/80 hover:bg-white rounded-full h-8 w-8"
+            onClick={handleWishlist}
+          >
+            <Heart 
+              className={`h-4 w-4 ${inWishlist ? 'text-red-500 fill-red-500' : 'text-gray-600'}`} 
+            />
+          </Button>
           
           {/* Badges for special products */}
           <div className="absolute top-2 left-2 flex flex-col gap-2">

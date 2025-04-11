@@ -35,3 +35,22 @@ export interface Product {
   isCommission: boolean;
   isOffer: boolean;
 }
+
+export interface Review {
+  id: string;
+  userId: string;
+  userName: string;
+  productId: string;
+  rating: number;
+  comment: string;
+  date: string;
+  helpful: number;
+  images?: string[];
+}
+
+export interface CartItem {
+  product: Product;
+  selectedColor: ProductColor;
+  selectedSize: ProductSize;
+  quantity: number;
+}

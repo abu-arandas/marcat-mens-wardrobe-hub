@@ -3,12 +3,15 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ShoppingBag, Search, Menu, X, User, LogIn, LogOut } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, LogIn, LogOut, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useCart } from '@/contexts/CartContext';
+import ShoppingCart from './ShoppingCart';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { itemCount } = useCart();
   const navigate = useNavigate();
   
   const handleLogout = () => {
@@ -71,12 +74,14 @@ const Navbar = () => {
                 </Link>
               </Button>
             )}
-            <Button variant="ghost" size="icon">
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute top-0 right-0 inline-block w-4 h-4 bg-marcat-accent rounded-full text-xs text-white font-bold flex items-center justify-center">
-                0
-              </span>
+            
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/wishlist" className="relative">
+                <Heart className="h-5 w-5" />
+              </Link>
             </Button>
+            
+            <ShoppingCart />
           </div>
           
           {/* Mobile menu button */}
@@ -128,10 +133,20 @@ const Navbar = () => {
                     </Link>
                   </Button>
                 )}
-                <Button variant="outline" size="sm">
-                  <ShoppingBag className="h-4 w-4 mr-2" />
-                  Cart (0)
+                
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/wishlist" className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 mr-2" />
+                    Wishlist
+                  </Link>
                 </Button>
+                
+                <div className="flex items-center justify-between">
+                  <Button variant="outline" size="sm">
+                    <ShoppingBag className="h-4 w-4 mr-2" />
+                    Cart ({itemCount})
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
