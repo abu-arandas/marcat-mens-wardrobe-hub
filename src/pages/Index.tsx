@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Zap, ShieldCheck, Globe, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,62 +9,70 @@ import { featuredProducts, offerProducts, commissionProducts, stores } from '@/d
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-white via-blue-50 to-white">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-marcat-navy to-marcat-accent text-white py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="md:w-1/2 mb-8 md:mb-0">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-                Men's Fashion Destination
+      {/* Hero Section with Enhanced Design */}
+      <section className="relative overflow-hidden py-16 md:py-24 px-4 md:px-8">
+        <div className="container mx-auto relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center rounded-full bg-blue-50 px-4 py-1.5 text-blue-600 text-sm tracking-wide">
+                <Zap className="w-4 h-4 mr-2" />
+                New Arrivals Just Dropped
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-marcat-navy leading-tight">
+                Elevate Your Style, <br />Effortlessly
               </h1>
-              <p className="text-lg md:text-xl mb-6 opacity-90">
-                Discover premium clothing from multiple stores, all in one place. Quality items with variety of colors, sizes, and styles.
+              <p className="text-lg text-marcat-gray opacity-80 leading-relaxed">
+                Discover premium menswear from multiple stores. Curated collections that blend quality, comfort, and contemporary design.
               </p>
-              <div className="flex space-x-4">
-                <Button size="lg" className="bg-white text-marcat-navy hover:bg-gray-100">
-                  Shop Now
+              <div className="flex space-x-4 pt-4">
+                <Button 
+                  size="lg" 
+                  className="bg-marcat-accent hover:bg-marcat-navy transition-colors duration-300 group"
+                >
+                  Shop Now 
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
-                <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-marcat-navy">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="border-marcat-navy text-marcat-navy hover:bg-marcat-navy hover:text-white transition-colors duration-300"
+                >
                   Explore Stores
                 </Button>
               </div>
             </div>
-            <div className="md:w-1/2 flex justify-center">
-              <div className="grid grid-cols-2 gap-4 max-w-md">
-                <div className="rounded-lg overflow-hidden shadow-lg transform -rotate-3">
+            
+            <div className="hidden md:grid grid-cols-2 gap-6 relative">
+              {[
+                "https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=500&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1578681041175-9717c638d0cc?q=80&w=500&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=500&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?q=80&w=500&auto=format&fit=crop"
+              ].map((src, index) => (
+                <div 
+                  key={src} 
+                  className={`rounded-xl overflow-hidden shadow-lg transform transition-all duration-500 hover:scale-105 hover:shadow-xl ${
+                    index % 2 === 0 ? '-rotate-3' : 'rotate-3'
+                  }`}
+                >
                   <img 
-                    src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=500&auto=format&fit=crop" 
-                    alt="Men's Fashion" 
+                    src={src} 
+                    alt={`Fashion Style ${index + 1}`} 
                     className="w-full h-48 object-cover"
                   />
                 </div>
-                <div className="rounded-lg overflow-hidden shadow-lg transform translate-y-4 rotate-3">
-                  <img 
-                    src="https://images.unsplash.com/photo-1578681041175-9717c638d0cc?q=80&w=500&auto=format&fit=crop" 
-                    alt="Men's Accessories" 
-                    className="w-full h-48 object-cover"
-                  />
-                </div>
-                <div className="rounded-lg overflow-hidden shadow-lg transform rotate-2">
-                  <img 
-                    src="https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=500&auto=format&fit=crop" 
-                    alt="Men's Formal Wear" 
-                    className="w-full h-48 object-cover"
-                  />
-                </div>
-                <div className="rounded-lg overflow-hidden shadow-lg transform -translate-y-4 -rotate-2">
-                  <img 
-                    src="https://images.unsplash.com/photo-1490367532201-b9bc1dc483f6?q=80&w=500&auto=format&fit=crop" 
-                    alt="Men's Casual Wear" 
-                    className="w-full h-48 object-cover"
-                  />
-                </div>
-              </div>
+              ))}
             </div>
           </div>
+        </div>
+        
+        {/* Background Decorative Elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl"></div>
         </div>
       </section>
       
@@ -84,36 +92,52 @@ const Index = () => {
         viewAllLink="/products"
       />
       
-      {/* Special Offer Banner */}
-      <section className="bg-marcat-light py-10">
+      {/* Enhanced Features Section */}
+      <section className="bg-gradient-to-br from-blue-50 to-white py-16">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="flex flex-col md:flex-row">
-              <div className="md:w-1/2">
-                <img 
-                  src="https://images.unsplash.com/photo-1530735038726-a73fd6e6c31c?q=80&w=800&auto=format&fit=crop" 
-                  alt="Special Offer" 
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
-                <div className="uppercase text-marcat-accent font-semibold tracking-wide text-sm">Limited Time</div>
-                <h2 className="text-3xl font-bold text-marcat-navy mt-2">Mid-Season Sale</h2>
-                <p className="mt-4 text-marcat-gray">
-                  Enjoy up to 40% off on selected items from our premium collections. Upgrade your wardrobe with quality pieces at special prices.
-                </p>
-                <div className="mt-6">
-                  <Button className="bg-marcat-accent hover:bg-marcat-navy">
-                    Shop the Sale <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-marcat-navy mb-4">Why Choose Marcat?</h2>
+            <p className="text-marcat-gray max-w-2xl mx-auto">
+              We've reimagined online shopping to provide a seamless, exciting experience for modern men.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { 
+                icon: ShieldCheck, 
+                title: "Verified Quality", 
+                description: "Every product is carefully vetted for premium standards." 
+              },
+              { 
+                icon: Globe, 
+                title: "Multiple Stores", 
+                description: "Shop from various curated stores in one platform." 
+              },
+              { 
+                icon: TrendingUp, 
+                title: "Latest Trends", 
+                description: "Stay ahead with constantly updated fashion collections." 
+              },
+              { 
+                icon: Zap, 
+                title: "Fast Delivery", 
+                description: "Quick and reliable shipping across the country." 
+              }
+            ].map(({ icon: Icon, title, description }) => (
+              <div key={title} className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all group">
+                <div className="bg-blue-50 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4 group-hover:bg-marcat-accent transition-colors">
+                  <Icon className="w-8 h-8 text-marcat-accent group-hover:text-white transition-colors" />
                 </div>
+                <h3 className="text-xl font-semibold mb-2 text-marcat-navy text-center">{title}</h3>
+                <p className="text-marcat-gray text-center">{description}</p>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
       
-      {/* Special Offers Section */}
+      {/* Special Offers */}
       <FeaturedSection 
         title="Special Offers" 
         subtitle="Don't miss these limited-time deals"
@@ -131,58 +155,10 @@ const Index = () => {
         viewAllText="View All Commission Products"
       />
       
-      {/* Features */}
-      <section className="py-16 bg-marcat-light">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-marcat-navy mb-12">Why Choose Marcat?</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-marcat-accent/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-marcat-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-marcat-navy">Quality Guarantee</h3>
-              <p className="text-marcat-gray">All our products undergo strict quality control to ensure premium standards.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-marcat-accent/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-marcat-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-marcat-navy">Multiple Stores</h3>
-              <p className="text-marcat-gray">Shop from various stores with different styles all in one platform.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-marcat-accent/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-marcat-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-marcat-navy">Secure Payments</h3>
-              <p className="text-marcat-gray">Your transactions are protected with state-of-the-art security systems.</p>
-            </div>
-            
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="bg-marcat-accent/10 w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4">
-                <svg className="w-8 h-8 text-marcat-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-marcat-navy">Customer Support</h3>
-              <p className="text-marcat-gray">Our dedicated team is ready to assist you with any inquiries or concerns.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-      
       <Footer />
     </div>
   );
 };
 
 export default Index;
+
