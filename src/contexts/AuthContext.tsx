@@ -15,6 +15,7 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -42,7 +43,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Demo validation - in real app this would be server-side
       if (email === 'demo@marcat.com' && password === 'password') {
-        const user = { id: '1', email, name: 'Demo User' };
+        const user = { id: '1', email, name: 'Demo User', isAdmin: false };
+        setUser(user);
+        localStorage.setItem('marcatUser', JSON.stringify(user));
+      } else if (email === 'admin@marcat.com' && password === 'adminpass') {
+        const user = { id: '2', email, name: 'Admin User', isAdmin: true };
         setUser(user);
         localStorage.setItem('marcatUser', JSON.stringify(user));
       } else {
@@ -60,7 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // In a real app, this would send data to your backend
-      const user = { id: Date.now().toString(), email, name };
+      const user = { id: Date.now().toString(), email, name, isAdmin: false };
       setUser(user);
       localStorage.setItem('marcatUser', JSON.stringify(user));
     } finally {
@@ -81,8 +86,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('marcatUser', JSON.stringify(updatedUser));
   };
 
+  // Computed property to check if the user is an admin
+  const isAdmin = user?.isAdmin || false;
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateProfile }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updateProfile, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

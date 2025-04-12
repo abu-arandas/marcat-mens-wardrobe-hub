@@ -30,7 +30,7 @@ const Login = () => {
       toast({
         variant: "destructive",
         title: "Login failed",
-        description: "Invalid email or password. Try demo@marcat.com / password"
+        description: "Invalid email or password. Try the demo credentials below."
       });
     }
   };
@@ -115,9 +115,19 @@ const Login = () => {
             </div>
             
             <div className="text-center mt-4">
-              <p className="text-sm text-gray-600">
-                Demo credentials: demo@marcat.com / password
+              <p className="text-sm text-gray-600 mb-1">
+                Demo credentials:
               </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                  <p className="font-medium text-sm">Regular User:</p>
+                  <p className="text-xs text-gray-500">demo@marcat.com / password</p>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-md border border-gray-200">
+                  <p className="font-medium text-sm">Admin User:</p>
+                  <p className="text-xs text-gray-500">admin@marcat.com / adminpass</p>
+                </div>
+              </div>
             </div>
           </form>
         </div>

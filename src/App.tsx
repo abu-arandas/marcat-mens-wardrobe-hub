@@ -21,10 +21,16 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Orders from "./pages/Orders";
 import Settings from "./pages/Settings";
+
+// Admin pages
+import AdminDashboard from "./pages/admin/Dashboard";
+import OrdersManagement from "./pages/admin/OrdersManagement";
+import ProductsManagement from "./pages/admin/ProductsManagement";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -56,6 +62,12 @@ const App: React.FC = () => {
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
                     <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                     <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                    
+                    {/* Admin routes */}
+                    <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+                    <Route path="/admin/orders" element={<AdminRoute><OrdersManagement /></AdminRoute>} />
+                    <Route path="/admin/products" element={<AdminRoute><ProductsManagement /></AdminRoute>} />
+                    
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
