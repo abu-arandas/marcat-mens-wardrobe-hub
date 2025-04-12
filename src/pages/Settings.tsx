@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -25,15 +24,14 @@ const Settings = () => {
     e.preventDefault();
     setIsUpdatingProfile(true);
     
-    // Simulate profile update
-    setTimeout(() => {
-      updateProfile({ name, email });
-      toast({
-        title: "Profile Updated",
-        description: "Your profile information has been updated successfully."
-      });
-      setIsUpdatingProfile(false);
-    }, 1500);
+    // Update profile using the context method
+    updateProfile({ name, email });
+    
+    toast({
+      title: "Profile Updated",
+      description: "Your profile information has been updated successfully."
+    });
+    setIsUpdatingProfile(false);
   };
   
   const handlePasswordChange = (e: React.FormEvent) => {
