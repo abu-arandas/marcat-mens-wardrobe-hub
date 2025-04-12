@@ -1,8 +1,9 @@
 
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from "@/components/ui/use-toast";
+import LoadingSpinner from './LoadingSpinner';
 
 interface AdminRouteProps {
   children: React.ReactNode;
@@ -11,6 +12,7 @@ interface AdminRouteProps {
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,7 +23,7 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
           title: "Access denied",
           description: "Please log in to access this page"
         });
-        navigate('/login');
+        navigate('/login', { state: { from: location.pathname } });
       } else if (!isAdmin) {
         toast({
           variant: "destructive",
@@ -31,10 +33,14 @@ const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
         navigate('/');
       }
     }
-  }, [user, loading, isAdmin, navigate, toast]);
+  }, [user, loading, isAdmin, navigate, toast, location]);
 
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <LoadingSpinner size="lg" message="Verifying admin access..." />
+      </div>
+    );
   }
 
   return isAdmin ? <>{children}</> : null;

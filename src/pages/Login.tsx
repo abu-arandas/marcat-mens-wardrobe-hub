@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,12 +8,20 @@ import { Label } from '@/components/ui/label';
 import { useToast } from "@/components/ui/use-toast";
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import LoadingSpinner from '@/components/LoadingSpinner';
+
+interface LocationState {
+  from?: string;
+}
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loading } = useAuth();
+  const { login, loading, authError } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as LocationState;
+  const from = state?.from || '/';
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,7 +33,8 @@ const Login = () => {
         title: "Login successful",
         description: "Welcome back to Marcat!"
       });
-      navigate('/');
+      // Navigate to the page they were trying to access
+      navigate(from);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -51,6 +60,11 @@ const Login = () => {
                 create a new account
               </Link>
             </p>
+            {from !== '/' && (
+              <p className="mt-2 text-center text-sm text-blue-600">
+                Sign in to continue to your requested page
+              </p>
+            )}
           </div>
           
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -84,6 +98,10 @@ const Login = () => {
               </div>
             </div>
 
+            {authError && (
+              <div className="text-red-500 text-sm text-center">{authError}</div>
+            )}
+
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -110,7 +128,12 @@ const Login = () => {
                 className="w-full"
                 disabled={loading}
               >
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <LoadingSpinner size="sm" message="" />
+                    <span className="ml-2">Signing in...</span>
+                  </div>
+                ) : 'Sign in'}
               </Button>
             </div>
             
