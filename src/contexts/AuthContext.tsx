@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 
 interface User {
@@ -12,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   authError: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User | null>;
   signup: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   updateProfile: (updates: Partial<User>) => void;
@@ -72,18 +71,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Simulate API delay - reduced for better UX
       await new Promise(resolve => setTimeout(resolve, 800));
       
+      let loggedInUser = null;
+      
       // Demo validation - in real app this would be server-side
       if (email === 'demo@marcat.com' && password === 'password') {
-        const user = { id: '1', email, name: 'Demo User', isAdmin: false };
-        setUser(user);
-        localStorage.setItem('marcatUser', JSON.stringify(user));
+        loggedInUser = { id: '1', email, name: 'Demo User', isAdmin: false };
+        setUser(loggedInUser);
+        localStorage.setItem('marcatUser', JSON.stringify(loggedInUser));
       } else if (email === 'admin@marcat.com' && password === 'adminpass') {
-        const user = { id: '2', email, name: 'Admin User', isAdmin: true };
-        setUser(user);
-        localStorage.setItem('marcatUser', JSON.stringify(user));
+        loggedInUser = { id: '2', email, name: 'Admin User', isAdmin: true };
+        setUser(loggedInUser);
+        localStorage.setItem('marcatUser', JSON.stringify(loggedInUser));
       } else {
         throw new Error('Invalid credentials');
       }
+      
+      return loggedInUser;
     } catch (error) {
       setAuthError((error as Error).message);
       throw error;

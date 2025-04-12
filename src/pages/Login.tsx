@@ -28,13 +28,19 @@ const Login = () => {
     e.preventDefault();
     
     try {
-      await login(email, password);
+      const user = await login(email, password);
       toast({
         title: "Login successful",
         description: "Welcome back to Marcat!"
       });
-      // Navigate to the page they were trying to access
-      navigate(from);
+      
+      // Redirect admin users to the admin dashboard, others to their requested page
+      if (user?.isAdmin) {
+        navigate('/admin');
+      } else {
+        // Navigate to the page they were trying to access
+        navigate(from);
+      }
     } catch (error) {
       toast({
         variant: "destructive",
