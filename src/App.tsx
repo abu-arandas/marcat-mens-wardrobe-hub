@@ -21,6 +21,10 @@ import Signup from "./pages/Signup";
 import Profile from "./pages/Profile";
 import Wishlist from "./pages/Wishlist";
 import ProtectedRoute from "./components/ProtectedRoute";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Orders from "./pages/Orders";
+import Settings from "./pages/Settings";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -46,8 +50,12 @@ const App: React.FC = () => {
                     <Route path="/commission" element={<Commission />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
                     <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                    <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                    <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
