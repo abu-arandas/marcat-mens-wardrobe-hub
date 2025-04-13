@@ -46,6 +46,10 @@ const Settings = lazy(() => import("./pages/Settings"));
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
 const OrdersManagement = lazy(() => import("./pages/admin/OrdersManagement"));
 const ProductsManagement = lazy(() => import("./pages/admin/ProductsManagement"));
+const StoresManagement = lazy(() => import("./pages/admin/StoresManagement"));
+const CustomersManagement = lazy(() => import("./pages/admin/CustomersManagement"));
+const Analytics = lazy(() => import("./pages/admin/Analytics"));
+const AdminSettings = lazy(() => import("./pages/admin/Settings"));
 
 // Loading component for suspense fallback
 const PageLoader = () => (
@@ -87,6 +91,10 @@ const App: React.FC = () => {
                       <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
                       <Route path="/admin/orders" element={<AdminRoute><OrdersManagement /></AdminRoute>} />
                       <Route path="/admin/products" element={<AdminRoute><ProductsManagement /></AdminRoute>} />
+                      <Route path="/admin/stores" element={<AdminRoute><StoresManagement /></AdminRoute>} />
+                      <Route path="/admin/customers" element={<AdminRoute><CustomersManagement /></AdminRoute>} />
+                      <Route path="/admin/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
+                      <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
                       
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
