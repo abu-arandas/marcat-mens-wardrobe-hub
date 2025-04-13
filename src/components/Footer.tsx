@@ -17,13 +17,13 @@ const Footer = () => {
               Marcat offers premium men's clothing from multiple stores, each with unique collections and styles.
             </p>
             <div className="mt-4 flex space-x-4">
-              <a href="#" className="text-gray-300 hover:text-white">
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <Facebook className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <Instagram className="h-5 w-5" />
               </a>
-              <a href="#" className="text-gray-300 hover:text-white">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white">
                 <Twitter className="h-5 w-5" />
               </a>
             </div>
@@ -33,11 +33,11 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2">
-              <li><Link to="/category/shirts" className="text-gray-300 hover:text-white text-sm">Shirts</Link></li>
-              <li><Link to="/category/pants" className="text-gray-300 hover:text-white text-sm">Pants</Link></li>
-              <li><Link to="/category/footwear" className="text-gray-300 hover:text-white text-sm">Footwear</Link></li>
-              <li><Link to="/category/outerwear" className="text-gray-300 hover:text-white text-sm">Outerwear</Link></li>
-              <li><Link to="/category/activewear" className="text-gray-300 hover:text-white text-sm">Activewear</Link></li>
+              <li><Link to="/products?category=shirts" className="text-gray-300 hover:text-white text-sm">Shirts</Link></li>
+              <li><Link to="/products?category=pants" className="text-gray-300 hover:text-white text-sm">Pants</Link></li>
+              <li><Link to="/products?category=footwear" className="text-gray-300 hover:text-white text-sm">Footwear</Link></li>
+              <li><Link to="/products?category=outerwear" className="text-gray-300 hover:text-white text-sm">Outerwear</Link></li>
+              <li><Link to="/products?category=activewear" className="text-gray-300 hover:text-white text-sm">Activewear</Link></li>
             </ul>
           </div>
           

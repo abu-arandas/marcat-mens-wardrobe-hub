@@ -32,7 +32,7 @@ const Navbar = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/home" className="text-marcat-gray hover:text-marcat-navy font-medium">Home</Link>
+            <Link to="/" className="text-marcat-gray hover:text-marcat-navy font-medium">Home</Link>
             <Link to="/stores" className="text-marcat-gray hover:text-marcat-navy font-medium">Stores</Link>
             <Link to="/products" className="text-marcat-gray hover:text-marcat-navy font-medium">Products</Link>
             <Link to="/offers" className="text-marcat-gray hover:text-marcat-navy font-medium">Offers</Link>
@@ -105,7 +105,7 @@ const Navbar = () => {
         {isMenuOpen && (
           <div className="md:hidden mt-4 bg-white py-2">
             <div className="flex flex-col space-y-4">
-              <Link to="/home" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Home</Link>
+              <Link to="/" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Home</Link>
               <Link to="/stores" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Stores</Link>
               <Link to="/products" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Products</Link>
               <Link to="/offers" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Offers</Link>
@@ -160,9 +160,11 @@ const Navbar = () => {
                 </Button>
                 
                 <div className="flex items-center justify-between">
-                  <Button variant="outline" size="sm">
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                    Cart ({itemCount})
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to="/cart" className="flex items-center gap-2">
+                      <ShoppingBag className="h-4 w-4 mr-2" />
+                      Cart ({itemCount})
+                    </Link>
                   </Button>
                 </div>
               </div>
