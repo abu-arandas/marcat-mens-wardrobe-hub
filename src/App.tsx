@@ -36,12 +36,14 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
+const Cart = lazy(() => import("./pages/Wishlist")); // This should be updated to a proper Cart component
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Orders = lazy(() => import("./pages/Orders"));
 const Settings = lazy(() => import("./pages/Settings"));
+const POS = lazy(() => import("./pages/POS"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import("./pages/admin/Dashboard"));
@@ -88,7 +90,8 @@ const App: React.FC = () => {
                       <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
                       <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-                      <Route path="/cart" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                      <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                      <Route path="/pos" element={<ProtectedRoute><POS /></ProtectedRoute>} />
                       
                       {/* Admin routes */}
                       <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -98,6 +101,7 @@ const App: React.FC = () => {
                       <Route path="/admin/customers" element={<AdminRoute><CustomersManagement /></AdminRoute>} />
                       <Route path="/admin/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
                       <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+                      <Route path="/admin/pos" element={<AdminRoute><POS /></AdminRoute>} />
                       
                       {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                       <Route path="*" element={<NotFound />} />
