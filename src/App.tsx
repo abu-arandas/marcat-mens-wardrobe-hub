@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { WishlistProvider } from "./contexts/WishlistContext";
 import LoadingSpinner from "./components/LoadingSpinner";
+import Main from "./pages/Main";
 import Index from "./pages/Index";
 
 // Create a client with performance optimizations
@@ -71,7 +72,8 @@ const App: React.FC = () => {
                 <BrowserRouter>
                   <Suspense fallback={<PageLoader />}>
                     <Routes>
-                      <Route path="/" element={<Index />} />
+                      <Route path="/" element={<Main />} />
+                      <Route path="/home" element={<Index />} />
                       <Route path="/product/:id" element={<ProductDetail />} />
                       <Route path="/store/:id" element={<StorePage />} />
                       <Route path="/products" element={<AllProducts />} />
