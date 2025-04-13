@@ -4,7 +4,7 @@ import { useCart } from '@/contexts/CartContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { Product, ProductColor, ProductSize } from '@/types';
+import { Product } from '@/types';
 
 // In a real app, this would come from an API or context
 import { products } from '@/data/mockData';
@@ -28,11 +28,15 @@ const POSProductGrid: React.FC<POSProductGridProps> = ({ category, searchQuery }
   });
 
   const handleAddToCart = (product: Product) => {
-    // For POS simplicity, we always add the first color and size option
-    const firstColor = product.colors[0];
-    const firstSize = firstColor.sizes[0];
-    
-    addToCart(product, firstColor, firstSize, 1);
+    try {
+      // For POS simplicity, we always add the first color and size option
+      const firstColor = product.colors[0];
+      const firstSize = firstColor.sizes[0];
+      
+      addToCart(product, firstColor, firstSize, 1);
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+    }
   };
 
   return (
@@ -44,6 +48,10 @@ const POSProductGrid: React.FC<POSProductGridProps> = ({ category, searchQuery }
               src={product.colors[0].images[0]} 
               alt={product.name}
               className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder.svg'; // Fallback to placeholder image
+              }}
             />
             {product.discountPrice && (
               <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded">

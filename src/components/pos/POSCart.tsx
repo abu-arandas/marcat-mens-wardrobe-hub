@@ -8,6 +8,22 @@ import { Trash2, Plus, Minus } from 'lucide-react';
 const POSCart: React.FC = () => {
   const { items, updateQuantity, removeFromCart } = useCart();
 
+  const handleUpdateQuantity = (index: number, newQuantity: number) => {
+    try {
+      updateQuantity(index, newQuantity);
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
+  };
+
+  const handleRemoveFromCart = (index: number) => {
+    try {
+      removeFromCart(index);
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  };
+
   return (
     <ScrollArea className="flex-1">
       {items.length === 0 ? (
@@ -30,6 +46,10 @@ const POSCart: React.FC = () => {
                     src={displayImage}
                     alt={item.product.name}
                     className="w-full h-full object-cover rounded"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder.svg'; // Fallback image
+                    }}
                   />
                 </div>
                 
@@ -45,7 +65,7 @@ const POSCart: React.FC = () => {
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6" 
-                    onClick={() => updateQuantity(index, item.quantity - 1)}
+                    onClick={() => handleUpdateQuantity(index, item.quantity - 1)}
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
@@ -54,7 +74,7 @@ const POSCart: React.FC = () => {
                     variant="ghost"
                     size="icon"
                     className="h-6 w-6"
-                    onClick={() => updateQuantity(index, item.quantity + 1)}
+                    onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
@@ -68,7 +88,7 @@ const POSCart: React.FC = () => {
                   variant="ghost"
                   size="icon"
                   className="h-6 w-6 text-red-500"
-                  onClick={() => removeFromCart(index)}
+                  onClick={() => handleRemoveFromCart(index)}
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>
