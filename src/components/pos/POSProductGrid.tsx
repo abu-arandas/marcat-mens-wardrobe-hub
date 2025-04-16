@@ -3,7 +3,7 @@ import React from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, AlertCircle } from 'lucide-react';
+import { Plus, AlertCircle, ShoppingCart } from 'lucide-react';
 import { Product } from '@/types';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -44,6 +44,16 @@ const POSProductGrid: React.FC<POSProductGridProps> = ({ category, searchQuery }
       const firstColor = product.colors[0];
       const firstSize = firstColor.sizes[0];
       
+      // Check if item is in stock
+      if (firstSize.quantity <= 0) {
+        toast({
+          title: "Out of stock",
+          description: `${product.name} is currently out of stock`,
+          variant: "destructive"
+        });
+        return;
+      }
+      
       addToCart(product, firstColor, firstSize, 1);
       
       toast({
@@ -63,56 +73,73 @@ const POSProductGrid: React.FC<POSProductGridProps> = ({ category, searchQuery }
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto pb-4">
       {filteredProducts.length > 0 ? (
-        filteredProducts.map(product => (
-          <Card key={product.id} className="overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <div className="h-36 bg-gray-100 relative">
-              <img 
-                src={product.colors?.[0]?.images?.[0] || '/placeholder.svg'} 
-                alt={product.name}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder.svg'; // Fallback to placeholder image
-                }}
-              />
-              {product.discountPrice && (
-                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-md">
-                  Sale
-                </span>
-              )}
-            </div>
-            <CardContent className="p-3">
-              <div>
-                <h3 className="font-medium text-sm truncate">{product.name}</h3>
-                <p className="text-xs text-gray-500 truncate">{product.category}</p>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="text-sm">
-                    {product.discountPrice ? (
-                      <>
-                        <span className="text-red-500 font-medium">${product.discountPrice.toFixed(2)}</span>
-                        <span className="text-gray-400 line-through ml-1 text-xs">${product.price.toFixed(2)}</span>
-                      </>
-                    ) : (
-                      <span className="font-medium">${product.price.toFixed(2)}</span>
-                    )}
+        filteredProducts.map(product => {
+          const firstColor = product.colors?.[0];
+          const firstSize = firstColor?.sizes?.[0];
+          const isOutOfStock = !firstSize || firstSize.quantity <= 0;
+          
+          return (
+            <Card 
+              key={product.id} 
+              className={`overflow-hidden shadow-sm hover:shadow-md transition-shadow ${isOutOfStock ? 'opacity-70' : ''}`}
+            >
+              <div className="h-36 bg-gray-100 relative">
+                <img 
+                  src={product.colors?.[0]?.images?.[0] || '/placeholder.svg'} 
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = '/placeholder.svg'; // Fallback to placeholder image
+                  }}
+                />
+                {product.discountPrice && (
+                  <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded-md">
+                    Sale
+                  </span>
+                )}
+                {isOutOfStock && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="bg-black/70 text-white text-xs font-medium px-3 py-1 rounded-md">
+                      Out of Stock
+                    </span>
                   </div>
-                  <Button 
-                    size="sm" 
-                    className="h-8 w-8 p-0" 
-                    onClick={() => handleAddToCart(product)}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
+                )}
               </div>
-            </CardContent>
-          </Card>
-        ))
+              <CardContent className="p-3">
+                <div>
+                  <h3 className="font-medium text-sm truncate">{product.name}</h3>
+                  <p className="text-xs text-gray-500 truncate">{product.category}</p>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="text-sm">
+                      {product.discountPrice ? (
+                        <>
+                          <span className="text-red-500 font-medium">${product.discountPrice.toFixed(2)}</span>
+                          <span className="text-gray-400 line-through ml-1 text-xs">${product.price.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="font-medium">${product.price.toFixed(2)}</span>
+                      )}
+                    </div>
+                    <Button 
+                      size="sm" 
+                      className="h-8 w-8 p-0" 
+                      onClick={() => handleAddToCart(product)}
+                      disabled={isOutOfStock}
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })
       ) : (
-        <div className="col-span-full flex flex-col items-center justify-center py-8 text-center">
-          <AlertCircle className="h-8 w-8 text-gray-400 mb-2" />
-          <p className="text-gray-500 font-medium">No products found</p>
-          <p className="text-gray-400 text-sm">Try a different search term or category</p>
+        <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
+          <AlertCircle className="h-10 w-10 text-gray-400 mb-3" />
+          <p className="text-gray-500 font-medium text-lg">No products found</p>
+          <p className="text-gray-400 text-sm mt-1">Try a different search term or category</p>
         </div>
       )}
     </div>

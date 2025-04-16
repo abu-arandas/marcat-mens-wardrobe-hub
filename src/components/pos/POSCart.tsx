@@ -56,10 +56,12 @@ const POSCart: React.FC = () => {
   return (
     <ScrollArea className="flex-1">
       {items.length === 0 ? (
-        <div className="h-full flex flex-col items-center justify-center p-4 text-center">
-          <ShoppingBag className="h-12 w-12 text-gray-300 mb-2" />
-          <p className="text-gray-500 font-medium">Cart is empty</p>
-          <p className="text-gray-400 text-sm">Add products to begin checkout</p>
+        <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+          <ShoppingBag className="h-16 w-16 text-gray-300 mb-4" />
+          <p className="text-gray-600 font-medium text-lg">Cart is empty</p>
+          <p className="text-gray-400 text-sm mt-1 max-w-xs">
+            Add products from the catalog to begin checkout
+          </p>
         </div>
       ) : (
         <div className="p-4">
@@ -72,7 +74,7 @@ const POSCart: React.FC = () => {
                 key={`${item.product.id}-${item.selectedColor.color}-${item.selectedSize.size}-${index}`}
                 className="flex items-center py-3 border-b last:border-b-0"
               >
-                <div className="w-12 h-12 bg-gray-100 rounded flex-shrink-0 mr-3">
+                <div className="w-14 h-14 bg-gray-100 rounded flex-shrink-0 mr-3 overflow-hidden">
                   <img
                     src={displayImage}
                     alt={item.product.name}
@@ -86,8 +88,13 @@ const POSCart: React.FC = () => {
                 
                 <div className="flex-1 min-w-0">
                   <h4 className="font-medium text-sm truncate">{item.product.name}</h4>
-                  <div className="text-xs text-gray-500 truncate">
-                    {item.selectedColor.color} / {item.selectedSize.size}
+                  <div className="text-xs text-gray-500 flex items-center">
+                    <span>{item.selectedColor.color} / {item.selectedSize.size}</span>
+                    {item.selectedSize.quantity < 10 && (
+                      <span className="ml-2 text-amber-600 text-[10px]">
+                        ({item.selectedSize.quantity} left)
+                      </span>
+                    )}
                   </div>
                 </div>
                 
@@ -106,6 +113,7 @@ const POSCart: React.FC = () => {
                     size="icon"
                     className="h-6 w-6 border-gray-200"
                     onClick={() => handleUpdateQuantity(index, item.quantity + 1)}
+                    disabled={item.quantity >= item.selectedSize.quantity}
                   >
                     <Plus className="h-3 w-3" />
                   </Button>
