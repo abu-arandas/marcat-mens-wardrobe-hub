@@ -1,19 +1,18 @@
 
 import React, { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Search, ShoppingBag, CreditCard, Printer, Save, ReceiptText } from 'lucide-react';
-import POSProductGrid from '@/components/pos/POSProductGrid';
+import { CardHeader, CardTitle } from '@/components/ui/card';
+import { ShoppingBag } from 'lucide-react';
 import POSCart from '@/components/pos/POSCart';
+import POSHeader from '@/components/pos/POSHeader';
+import POSSearch from '@/components/pos/POSSearch';
+import POSCategoryTabs from '@/components/pos/POSCategoryTabs';
+import POSOrderSummary from '@/components/pos/POSOrderSummary';
 import POSPaymentModal from '@/components/pos/POSPaymentModal';
-import { Separator } from '@/components/ui/separator';
 import { useToast } from "@/components/ui/use-toast";
 
 const POS: React.FC = () => {
-  const { items, totalPrice, clearCart } = useCart();
+  const { items, clearCart } = useCart();
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -27,27 +26,6 @@ const POS: React.FC = () => {
     { id: 'outerwear', name: 'Outerwear' },
     { id: 'accessories', name: 'Accessories' }
   ];
-
-  const handlePayment = () => {
-    if (items.length === 0) {
-      toast({
-        title: "Empty cart",
-        description: "Add items to cart before proceeding to payment",
-        variant: "destructive"
-      });
-      return;
-    }
-    setShowPaymentModal(true);
-  };
-
-  const handlePaymentComplete = () => {
-    clearCart();
-    setShowPaymentModal(false);
-    toast({
-      title: "Transaction complete",
-      description: "Order has been processed successfully",
-    });
-  };
 
   const handleSaveOrder = () => {
     if (items.length === 0) {
@@ -81,59 +59,47 @@ const POS: React.FC = () => {
     });
   };
 
+  const handlePayment = () => {
+    if (items.length === 0) {
+      toast({
+        title: "Empty cart",
+        description: "Add items to cart before proceeding to payment",
+        variant: "destructive"
+      });
+      return;
+    }
+    setShowPaymentModal(true);
+  };
+
+  const handlePaymentComplete = () => {
+    clearCart();
+    setShowPaymentModal(false);
+    toast({
+      title: "Transaction complete",
+      description: "Order has been processed successfully",
+    });
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Product Selection Panel */}
       <div className="flex-1 flex flex-col h-full overflow-hidden p-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <h1 className="text-2xl font-bold">Point of Sale</h1>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleSaveOrder}>
-              <Save className="h-4 w-4 mr-2" />
-              Save Order
-            </Button>
-            <Button variant="outline" size="sm" onClick={handlePrintReceipt}>
-              <Printer className="h-4 w-4 mr-2" />
-              Print Receipt
-            </Button>
-          </div>
-        </div>
+        <POSHeader 
+          handleSaveOrder={handleSaveOrder}
+          handlePrintReceipt={handlePrintReceipt}
+        />
 
-        <div className="relative mb-4">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search products..." 
-            className="pl-8" 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <POSSearch 
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+        />
 
-        <Card className="flex-1 overflow-hidden border-gray-200">
-          <CardHeader className="p-0">
-            <Tabs defaultValue="all" value={activeCategory} className="w-full">
-              <TabsList className="w-full h-auto justify-start overflow-x-auto bg-gray-50 p-1 rounded-none border-b">
-                {categories.map(category => (
-                  <TabsTrigger 
-                    key={category.id} 
-                    value={category.id}
-                    onClick={() => setActiveCategory(category.id)}
-                    className="py-1.5 px-3 text-sm"
-                  >
-                    {category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
-              <TabsContent value={activeCategory} className="m-0 p-4 overflow-y-auto max-h-[calc(100vh-280px)]">
-                <POSProductGrid 
-                  category={activeCategory}
-                  searchQuery={searchQuery}
-                />
-              </TabsContent>
-            </Tabs>
-          </CardHeader>
-        </Card>
+        <POSCategoryTabs
+          categories={categories}
+          activeCategory={activeCategory}
+          setActiveCategory={setActiveCategory}
+          searchQuery={searchQuery}
+        />
       </div>
 
       {/* Order Summary Panel */}
@@ -147,48 +113,16 @@ const POS: React.FC = () => {
         
         <POSCart />
         
-        <CardFooter className="mt-auto p-4 border-t bg-white flex-col">
-          <div className="space-y-2 w-full">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Subtotal</span>
-              <span>${totalPrice.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Tax (8%)</span>
-              <span>${(totalPrice * 0.08).toFixed(2)}</span>
-            </div>
-            <Separator className="my-2" />
-            <div className="flex justify-between text-lg font-semibold">
-              <span>Total</span>
-              <span>${(totalPrice * 1.08).toFixed(2)}</span>
-            </div>
-          </div>
-          
-          <div className="mt-4 grid grid-cols-2 gap-3 w-full">
-            <Button 
-              variant="outline" 
-              className="w-full" 
-              disabled={items.length === 0} 
-              onClick={() => clearCart()}
-            >
-              Clear
-            </Button>
-            <Button 
-              className="w-full bg-slate-800 hover:bg-slate-900" 
-              disabled={items.length === 0} 
-              onClick={handlePayment}
-            >
-              <CreditCard className="h-4 w-4 mr-2" />
-              Pay
-            </Button>
-          </div>
-        </CardFooter>
+        <POSOrderSummary 
+          handlePayment={handlePayment}
+          clearCart={clearCart}
+        />
       </div>
 
       {/* Payment Modal */}
       {showPaymentModal && (
         <POSPaymentModal 
-          total={totalPrice * 1.08} 
+          total={items.reduce((sum, item) => sum + (item.product.discountPrice || item.product.price) * item.quantity, 0) * 1.08} 
           onClose={() => setShowPaymentModal(false)} 
           onComplete={handlePaymentComplete}
         />

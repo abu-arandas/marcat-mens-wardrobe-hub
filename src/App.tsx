@@ -1,4 +1,3 @@
-
 import React, { lazy, Suspense } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -36,7 +35,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Wishlist = lazy(() => import("./pages/Wishlist"));
-const Cart = lazy(() => import("./pages/Wishlist")); // This should be updated to a proper Cart component
+const Cart = lazy(() => import("./pages/Cart")); // Fixed: now points to Cart component
 const ProtectedRoute = lazy(() => import("./components/ProtectedRoute"));
 const AdminRoute = lazy(() => import("./components/AdminRoute"));
 const About = lazy(() => import("./pages/About"));
