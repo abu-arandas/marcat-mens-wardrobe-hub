@@ -3,13 +3,24 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ShoppingBag, Search, Menu, X, User, LogIn, LogOut, Heart, LayoutDashboard } from 'lucide-react';
+import { 
+  ShoppingBag, 
+  Search, 
+  Menu, 
+  X, 
+  User, 
+  LogIn, 
+  LogOut, 
+  Heart, 
+  LayoutDashboard 
+} from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import ShoppingCart from './ShoppingCart';
+import { Badge } from '@/components/ui/badge';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const { user, logout, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
@@ -17,6 +28,13 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+    }
   };
   
   return (
@@ -41,14 +59,16 @@ const Navbar = () => {
           
           {/* Search */}
           <div className="hidden md:flex w-1/3">
-            <div className="relative w-full">
+            <form onSubmit={handleSearch} className="relative w-full">
               <Input
                 type="text"
                 placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border rounded-md"
               />
               <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
+            </form>
           </div>
           
           {/* User controls */}
@@ -90,7 +110,16 @@ const Navbar = () => {
               </Link>
             </Button>
             
-            <ShoppingCart />
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/cart" className="relative">
+                <ShoppingBag className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                    {itemCount}
+                  </Badge>
+                )}
+              </Link>
+            </Button>
           </div>
           
           {/* Mobile menu button */}
@@ -111,14 +140,16 @@ const Navbar = () => {
               <Link to="/offers" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Offers</Link>
               <Link to="/commission" className="block px-4 py-2 text-marcat-gray hover:bg-gray-100">Commission Products</Link>
               
-              <div className="relative px-4 pb-2">
+              <form onSubmit={handleSearch} className="relative px-4 pb-2">
                 <Input
                   type="text"
                   placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border rounded-md"
                 />
                 <Search className="absolute left-7 top-2.5 h-5 w-5 text-gray-400" />
-              </div>
+              </form>
               
               <div className="flex flex-col px-4 space-y-2">
                 {user ? (
@@ -159,14 +190,12 @@ const Navbar = () => {
                   </Link>
                 </Button>
                 
-                <div className="flex items-center justify-between">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to="/cart" className="flex items-center gap-2">
-                      <ShoppingBag className="h-4 w-4 mr-2" />
-                      Cart ({itemCount})
-                    </Link>
-                  </Button>
-                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/cart" className="flex items-center gap-2">
+                    <ShoppingBag className="h-4 w-4 mr-2" />
+                    Cart ({itemCount})
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

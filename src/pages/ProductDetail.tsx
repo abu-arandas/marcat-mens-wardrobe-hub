@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '@/data/mockData';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,10 +8,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Star, ShoppingBag, Heart, Truck, ArrowLeft, Share2 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
+import { useWishlist } from '@/contexts/WishlistContext';
+import { useToast } from '@/components/ui/use-toast';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
   const product = products.find(p => p.id === id);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { addToCart } = useCart();
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist();
   
   const [selectedColorIndex, setSelectedColorIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState('');
@@ -50,10 +56,78 @@ const ProductDetail = () => {
       setQuantity(prev => prev - 1);
     }
   };
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      toast({
+        title: "Please select a size",
+        description: "You need to select a size before adding to cart",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const cartItem = {
+      ...product,
+      selectedColor: selectedColor.color,
+      selectedSize,
+      quantity,
+      image: currentImage
+    };
+    
+    addToCart(cartItem);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart`,
+    });
+  };
+
+  const handleWishlist = () => {
+    const isInList = isInWishlist(product.id);
+    
+    if (isInList) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removed from wishlist",
+        description: `${product.name} has been removed from your wishlist`,
+      });
+    } else {
+      addToWishlist(product);
+      toast({
+        title: "Added to wishlist",
+        description: `${product.name} has been added to your wishlist`,
+      });
+    }
+  };
+
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: product.description,
+        url: window.location.href,
+      })
+      .catch((error) => {
+        console.error('Error sharing', error);
+        toast({
+          title: "Sharing failed",
+          description: "Could not share this product",
+          variant: "destructive"
+        });
+      });
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copied",
+        description: "Product link copied to clipboard",
+      });
+    }
+  };
   
   const selectedSizeData = selectedColor.sizes.find(s => s.size === selectedSize);
   const isOutOfStock = selectedSize ? (selectedSizeData?.quantity || 0) <= 0 : false;
   const lowStock = selectedSize ? (selectedSizeData?.quantity || 0) <= 5 && (selectedSizeData?.quantity || 0) > 0 : false;
+  const inWishlist = isInWishlist(product.id);
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -61,27 +135,24 @@ const ProductDetail = () => {
       
       <main className="flex-grow py-8">
         <div className="container">
-          {/* Breadcrumbs */}
           <div className="flex items-center text-sm text-marcat-gray mb-6">
             <Link to="/" className="hover:text-marcat-accent">Home</Link>
             <span className="mx-2">/</span>
-            <Link to={`/category/${product.category.toLowerCase()}`} className="hover:text-marcat-accent">
+            <Link to={`/products?category=${product.category.toLowerCase()}`} className="hover:text-marcat-accent">
               {product.category}
             </Link>
             <span className="mx-2">/</span>
             <span className="text-marcat-gray">{product.name}</span>
           </div>
           
-          {/* Back Button */}
           <div className="mb-6">
-            <Button variant="ghost" onClick={() => window.history.back()} className="flex items-center text-marcat-navy hover:text-marcat-accent">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="flex items-center text-marcat-navy hover:text-marcat-accent">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Product Images */}
             <div className="space-y-4">
               <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
                 <img 
@@ -110,7 +181,6 @@ const ProductDetail = () => {
               </div>
             </div>
             
-            {/* Product Details */}
             <div>
               <div className="flex items-center mb-2">
                 <Link to={`/store/${product.storeId}`} className="text-marcat-accent hover:text-marcat-navy">
@@ -159,7 +229,6 @@ const ProductDetail = () => {
               
               <p className="text-marcat-gray mb-6">{product.description}</p>
               
-              {/* Color Selection */}
               <div className="mb-6">
                 <h3 className="font-semibold mb-2">Color: <span className="text-marcat-accent">{selectedColor.color}</span></h3>
                 <div className="flex space-x-2">
@@ -186,7 +255,6 @@ const ProductDetail = () => {
                 </div>
               </div>
               
-              {/* Size Selection */}
               <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="font-semibold">Size:</h3>
@@ -217,7 +285,6 @@ const ProductDetail = () => {
                   ))}
                 </RadioGroup>
                 
-                {/* Stock Status */}
                 {selectedSize && (
                   <div className="mt-2">
                     {isOutOfStock && (
@@ -233,7 +300,6 @@ const ProductDetail = () => {
                 )}
               </div>
               
-              {/* Quantity */}
               <div className="mb-8">
                 <h3 className="font-semibold mb-2">Quantity:</h3>
                 <div className="flex items-center">
@@ -257,26 +323,35 @@ const ProductDetail = () => {
                 </div>
               </div>
               
-              {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 mb-8">
                 <Button 
                   className="flex-grow bg-marcat-navy hover:bg-marcat-accent flex items-center justify-center" 
                   size="lg"
+                  onClick={handleAddToCart}
                   disabled={isOutOfStock || selectedSize === ''}
                 >
                   <ShoppingBag className="mr-2 h-5 w-5" />
                   Add to Cart
                 </Button>
-                <Button variant="outline" size="lg" className="flex items-center justify-center">
-                  <Heart className="mr-2 h-5 w-5" />
-                  Wishlist
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="flex items-center justify-center"
+                  onClick={handleWishlist}
+                >
+                  <Heart className={`mr-2 h-5 w-5 ${inWishlist ? "fill-red-500 text-red-500" : ""}`} />
+                  {inWishlist ? "Remove from Wishlist" : "Wishlist"}
                 </Button>
-                <Button variant="ghost" size="icon" className="hidden sm:flex items-center justify-center">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="hidden sm:flex items-center justify-center"
+                  onClick={handleShare}
+                >
                   <Share2 className="h-5 w-5" />
                 </Button>
               </div>
               
-              {/* Delivery Info */}
               <div className="p-4 bg-gray-50 rounded-lg">
                 <div className="flex items-start">
                   <Truck className="h-5 w-5 text-marcat-accent mt-0.5 mr-2" />
@@ -290,7 +365,6 @@ const ProductDetail = () => {
             </div>
           </div>
           
-          {/* Product Information Tabs */}
           <div className="mt-12">
             <Tabs defaultValue="description">
               <TabsList className="grid w-full grid-cols-3">
