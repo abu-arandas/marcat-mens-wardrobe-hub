@@ -1,4 +1,5 @@
 
+
 export interface Store {
   id: string;
   name: string;
@@ -68,8 +69,9 @@ export interface UserWithMetadata extends User {
 export interface User {
   id: string;
   email?: string;
-  name?: string; // To support legacy code
+  name?: string; // Adding name property to User interface
   user_metadata?: {
     name?: string;
   };
 }
+
