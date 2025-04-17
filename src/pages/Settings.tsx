@@ -9,9 +9,9 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Settings = () => {
   const { user, updateProfile } = useAuth();
-  const { toast } = useToast();
   
   const [name, setName] = useState(user?.name || user?.user_metadata?.name || '');
+  
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
