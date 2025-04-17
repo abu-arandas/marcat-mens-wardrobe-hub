@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Product } from '@/types';
@@ -47,15 +46,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.stopPropagation();
     
     // Quick add with default options
-    const cartItem = {
-      ...product,
-      selectedColor: product.colors[0].color,
-      selectedSize: product.colors[0].sizes[0]?.size || '',
-      quantity: 1,
-      image: displayImage
-    };
+    const defaultColor = product.colors[0];
+    const defaultSize = defaultColor.sizes[0];
     
-    addToCart(cartItem);
+    addToCart(product, defaultColor, defaultSize, 1);
+    
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart`,

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { products } from '@/data/mockData';
@@ -67,15 +68,19 @@ const ProductDetail = () => {
       return;
     }
     
-    const cartItem = {
-      ...product,
-      selectedColor: selectedColor.color,
-      selectedSize,
-      quantity,
-      image: currentImage
-    };
+    const selectedSizeObj = selectedColor.sizes.find(s => s.size === selectedSize);
     
-    addToCart(cartItem);
+    if (!selectedSizeObj) {
+      toast({
+        title: "Invalid size selection",
+        description: "The selected size is not available",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    addToCart(product, selectedColor, selectedSizeObj, quantity);
+    
     toast({
       title: "Added to cart",
       description: `${product.name} has been added to your cart`,
