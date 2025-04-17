@@ -11,6 +11,7 @@ const CommissionSection: React.FC = () => {
           title="Commission Products" 
           subtitle="Exclusive products with special rewards for our partners"
           products={commissionProducts}
+          itemType="product"
           viewAllLink="/commission"
           viewAllText="View All Commission Products"
         />

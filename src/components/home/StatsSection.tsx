@@ -33,6 +33,7 @@ const StatsSection: React.FC = () => {
           title="Featured Stores" 
           subtitle="Discover our top-rated men's clothing stores"
           stores={stores}
+          itemType="store"
           viewAllLink="/stores"
         />
       </div>

@@ -42,6 +42,7 @@ const OffersSection: React.FC = () => {
           title="Special Offers" 
           subtitle="Don't miss these limited-time deals"
           products={offerProducts}
+          itemType="product"
           viewAllLink="/offers"
           viewAllText="View All Offers"
         />

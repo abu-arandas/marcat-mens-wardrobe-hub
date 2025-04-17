@@ -53,14 +53,14 @@ const Index: React.FC = () => {
       
       {offersLoading ? (
         <div className="py-10" />
-      ) : offerProducts && (
-        <OffersSection products={offerProducts} />
+      ) : (
+        <OffersSection />
       )}
       
       {commissionLoading ? (
         <div className="py-10" />
-      ) : commissionProducts && (
-        <CommissionSection products={commissionProducts} />
+      ) : (
+        <CommissionSection />
       )}
       
       <NewsletterSection />
