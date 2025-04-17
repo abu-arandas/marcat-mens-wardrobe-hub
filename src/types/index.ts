@@ -1,5 +1,3 @@
-
-
 export interface Store {
   id: string;
   name: string;
@@ -74,4 +72,3 @@ export interface User {
     name?: string;
   };
 }
-

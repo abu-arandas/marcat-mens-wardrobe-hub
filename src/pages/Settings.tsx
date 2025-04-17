@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -9,6 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 const Settings = () => {
   const { user, updateProfile } = useAuth();
+  const { toast } = useToast();
   
   const [name, setName] = useState(user?.name || user?.user_metadata?.name || '');
   
