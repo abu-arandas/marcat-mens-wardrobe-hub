@@ -31,7 +31,8 @@ const Index: React.FC = () => {
         <FeaturedSection
           title="Featured Stores"
           subtitle="Discover incredible shops with unique products"
-          stores={stores?.slice(0, 4)}
+          items={stores?.slice(0, 4) || []}
+          itemType="store"
           viewAllLink="/stores"
         />
       )}
@@ -44,20 +45,21 @@ const Index: React.FC = () => {
         <FeaturedSection
           title="New Arrivals"
           subtitle="Check out our latest products"
-          products={products?.slice(0, 8)}
+          items={products?.slice(0, 8) || []}
+          itemType="product"
           viewAllLink="/products"
         />
       )}
       
       {offersLoading ? (
         <div className="py-10" />
-      ) : (
+      ) : offerProducts && (
         <OffersSection products={offerProducts} />
       )}
       
       {commissionLoading ? (
         <div className="py-10" />
-      ) : (
+      ) : commissionProducts && (
         <CommissionSection products={commissionProducts} />
       )}
       

@@ -54,3 +54,22 @@ export interface CartItem {
   selectedSize: ProductSize;
   quantity: number;
 }
+
+// For usage with Supabase User type
+export interface UserMetadata {
+  name?: string;
+}
+
+export interface UserWithMetadata extends User {
+  user_metadata: UserMetadata;
+}
+
+// Use this type instead of importing directly from supabase-js
+export interface User {
+  id: string;
+  email?: string;
+  name?: string; // To support legacy code
+  user_metadata?: {
+    name?: string;
+  };
+}

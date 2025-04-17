@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
@@ -12,12 +11,15 @@ import { Trash2, ShoppingBag, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Cart: React.FC = () => {
-  const { items, removeFromCart, updateQuantity, calculateTotal, clearCart } = useCart();
+  const { items, removeFromCart, updateQuantity, clearCart } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
-  const total = calculateTotal();
+  const total = items.reduce((sum, item) => {
+    const price = item.product.discountPrice || item.product.price;
+    return sum + price * item.quantity;
+  }, 0);
 
   const handleQuantityChange = (itemIndex: number, newQuantity: number) => {
     if (newQuantity > 0 && newQuantity <= 10) {

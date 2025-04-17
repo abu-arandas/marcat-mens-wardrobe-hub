@@ -24,7 +24,7 @@ interface AdminLayoutProps {
 }
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,6 +41,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
   const toggleSidebar = () => setCollapsed(!collapsed);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
+
+  const getUserName = () => {
+    if (!user) return 'Admin';
+    return user.name || user.user_metadata?.name || 'Admin';
+  };
+
+  const getUserInitial = () => {
+    const name = getUserName();
+    return name.charAt(0) || 'A';
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -107,8 +117,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </Button>
           <span className="text-xl font-bold text-marcat-navy">Marcat Admin</span>
           <Avatar className="h-8 w-8">
-            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name || 'Admin'}`} />
-            <AvatarFallback>{user?.name?.charAt(0) || 'A'}</AvatarFallback>
+            <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${getUserName()}`} />
+            <AvatarFallback>{getUserInitial()}</AvatarFallback>
           </Avatar>
         </header>
         
@@ -167,13 +177,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         <header className="bg-white border-b border-gray-200 hidden md:flex h-16 items-center px-6">
           <div className="ml-auto flex items-center gap-4">
             <span className="text-sm text-gray-700">
-              Logged in as <span className="font-medium">{user?.name || 'Admin'}</span>
+              Logged in as <span className="font-medium">{getUserName()}</span>
             </span>
             <Avatar className="h-8 w-8">
-              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user?.name || 'Admin'}`} />
-              <AvatarFallback>{user?.name?.charAt(0) || 'A'}</AvatarFallback>
+              <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${getUserName()}`} />
+              <AvatarFallback>{getUserInitial()}</AvatarFallback>
             </Avatar>
-            <Button variant="ghost" size="sm" onClick={logout}>
+            <Button variant="ghost" size="sm" onClick={signOut}>
               Sign Out
             </Button>
           </div>

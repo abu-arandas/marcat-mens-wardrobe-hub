@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,12 +20,12 @@ import { Badge } from '@/components/ui/badge';
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const { user, logout, isAdmin } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    logout();
+    signOut();
     navigate('/');
   };
   
@@ -35,6 +34,11 @@ const Navbar = () => {
     if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
     }
+  };
+  
+  const getUserName = () => {
+    if (!user) return '';
+    return user.name || user.user_metadata?.name || 'User';
   };
   
   return (
@@ -86,7 +90,7 @@ const Navbar = () => {
                   <Button variant="ghost" size="sm" asChild>
                     <Link to="/profile" className="flex items-center gap-2">
                       <User className="h-5 w-5" />
-                      {user.name}
+                      {getUserName()}
                     </Link>
                   </Button>
                 )}

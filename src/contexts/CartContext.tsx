@@ -18,6 +18,7 @@ interface CartContextType {
   updateQuantity: (itemIndex: number, quantity: number) => void;
   removeFromCart: (itemIndex: number) => void;
   clearCart: () => void;
+  calculateTotal: () => number;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -118,6 +119,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       description: "All items have been removed from your cart",
     });
   };
+
+  const calculateTotal = () => {
+    return items.reduce((total, item) => {
+      const price = item.product.discountPrice || item.product.price;
+      return total + (price * item.quantity);
+    }, 0);
+  };
   
   return (
     <CartContext.Provider 
@@ -128,7 +136,8 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addToCart, 
         updateQuantity, 
         removeFromCart, 
-        clearCart 
+        clearCart,
+        calculateTotal 
       }}
     >
       {children}

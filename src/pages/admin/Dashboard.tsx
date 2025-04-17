@@ -30,6 +30,11 @@ import {
 const Dashboard = () => {
   const { user } = useAuth();
   
+  const getUserName = () => {
+    if (!user) return 'Admin';
+    return user.name || user.user_metadata?.name || 'Admin';
+  };
+  
   // These would be fetched from an API in a real application
   const recentOrders = [
     { id: '1', customer: 'John Doe', product: 'Cat Tree Deluxe', amount: '$129.99', status: 'Completed' },
@@ -48,7 +53,7 @@ const Dashboard = () => {
     <AdminLayout>
       <div className="p-6">
         <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-        <p className="text-gray-500 mb-8">Welcome back, {user?.name || 'Admin'}!</p>
+        <p className="text-gray-500 mb-8">Welcome back, {getUserName()}!</p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>

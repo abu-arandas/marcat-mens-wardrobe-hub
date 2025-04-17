@@ -11,8 +11,7 @@ const Settings = () => {
   const { user, updateProfile } = useAuth();
   const { toast } = useToast();
   
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const [name, setName] = useState(user?.name || user?.user_metadata?.name || '');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,18 +19,27 @@ const Settings = () => {
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   
-  const handleProfileUpdate = (e: React.FormEvent) => {
+  const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUpdatingProfile(true);
     
-    // Update profile using the context method
-    updateProfile({ name, email });
-    
-    toast({
-      title: "Profile Updated",
-      description: "Your profile information has been updated successfully."
-    });
-    setIsUpdatingProfile(false);
+    try {
+      // Update profile using the context method
+      await updateProfile({ name });
+      
+      toast({
+        title: "Profile Updated",
+        description: "Your profile information has been updated successfully."
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Update Failed",
+        description: error instanceof Error ? error.message : "An error occurred while updating your profile."
+      });
+    } finally {
+      setIsUpdatingProfile(false);
+    }
   };
   
   const handlePasswordChange = (e: React.FormEvent) => {
@@ -100,10 +108,11 @@ const Settings = () => {
                     <Input
                       id="email"
                       type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
+                      value={user?.email || ''}
+                      disabled
+                      className="bg-gray-100"
                     />
+                    <p className="mt-1 text-sm text-gray-500">Email cannot be changed.</p>
                   </div>
                   
                   <Button 
