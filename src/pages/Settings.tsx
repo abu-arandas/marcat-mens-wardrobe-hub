@@ -24,7 +24,6 @@ const Settings = () => {
     setIsUpdatingProfile(true);
     
     try {
-      // Update profile using the context method
       await updateProfile({ name });
       
       toast({
@@ -56,7 +55,6 @@ const Settings = () => {
       return;
     }
     
-    // Simulate password change
     setTimeout(() => {
       toast({
         title: "Password Updated",

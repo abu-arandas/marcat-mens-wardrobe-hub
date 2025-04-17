@@ -9,20 +9,27 @@ import { Store, Product } from '@/types';
 interface FeaturedSectionProps {
   title: string;
   subtitle?: string;
-  stores?: Store[];
-  products?: Product[];
+  items?: Store[] | Product[];
+  itemType: "store" | "product";
   viewAllLink?: string;
   viewAllText?: string;
+  stores?: Store[];
+  products?: Product[];
 }
 
 const FeaturedSection: React.FC<FeaturedSectionProps> = ({
   title,
   subtitle,
+  items,
   stores,
   products,
+  itemType,
   viewAllLink,
   viewAllText = "View All"
 }) => {
+  // Use items if provided, otherwise use stores or products
+  const displayItems = items || stores || products || [];
+  
   return (
     <section className="py-10">
       <div className="container">
@@ -42,12 +49,12 @@ const FeaturedSection: React.FC<FeaturedSectionProps> = ({
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {stores && stores.map(store => (
-            <StoreListing key={store.id} store={store} />
+          {itemType === "store" && displayItems.map(item => (
+            <StoreListing key={item.id} store={item as Store} />
           ))}
           
-          {products && products.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {itemType === "product" && displayItems.map(item => (
+            <ProductCard key={item.id} product={item as Product} />
           ))}
         </div>
       </div>
