@@ -1,157 +1,140 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 
-interface User {
-  id: string;
-  email: string;
-  name?: string;
-  isAdmin?: boolean;
-}
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
+import { getUserProfile } from '@/services/AuthService';
 
+// Define the shape of our authentication context
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  authError: string | null;
-  login: (email: string, password: string) => Promise<User | null>;
-  signup: (email: string, password: string, name: string) => Promise<void>;
-  logout: () => void;
-  updateProfile: (updates: Partial<User>) => void;
   isAdmin: boolean;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateProfile: (data: { name?: string; avatar_url?: string }) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create the context with a default value
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  isAdmin: false,
+  loading: true,
+  signIn: async () => {},
+  signUp: async () => {},
+  signOut: async () => {},
+  updateProfile: async () => {}
+});
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+// Custom hook to use the auth context
+export const useAuth = () => useContext(AuthContext);
+
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [authError, setAuthError] = useState<string | null>(null);
-
-  // Validate stored auth data on mount with memoized function
-  const validateAuth = useCallback(async () => {
-    try {
-      setLoading(true);
-      setAuthError(null);
-      
-      // Get stored user data
-      const storedUser = localStorage.getItem('marcatUser');
-      if (!storedUser) {
-        setLoading(false);
-        return;
-      }
-
-      // Parse user data
-      const userData = JSON.parse(storedUser);
-      
-      // Validate user object structure
-      if (!userData.id || !userData.email) {
-        console.error('Invalid user data in storage');
-        localStorage.removeItem('marcatUser');
-        setLoading(false);
-        return;
-      }
-      
-      // In a real app, we would validate the token with the backend here
-      setUser(userData);
-    } catch (error) {
-      console.error('Error validating authentication:', error);
-      localStorage.removeItem('marcatUser'); // Clear invalid data
-      setAuthError('Authentication validation failed');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    validateAuth();
-  }, [validateAuth]);
-
-  const login = async (email: string, password: string) => {
-    setLoading(true);
-    setAuthError(null);
-    try {
-      // Simulate API delay - reduced for better UX
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      let loggedInUser = null;
-      
-      // Demo validation - in real app this would be server-side
-      if (email === 'demo@marcat.com' && password === 'password') {
-        loggedInUser = { id: '1', email, name: 'Demo User', isAdmin: false };
-        setUser(loggedInUser);
-        localStorage.setItem('marcatUser', JSON.stringify(loggedInUser));
-      } else if (email === 'admin@marcat.com' && password === 'adminpass') {
-        loggedInUser = { id: '2', email, name: 'Admin User', isAdmin: true };
-        setUser(loggedInUser);
-        localStorage.setItem('marcatUser', JSON.stringify(loggedInUser));
-      } else {
-        throw new Error('Invalid credentials');
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user || null);
+        checkUserAdmin(session?.user?.id);
       }
-      
-      return loggedInUser;
-    } catch (error) {
-      setAuthError((error as Error).message);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
 
-  const signup = async (email: string, password: string, name: string) => {
-    setLoading(true);
-    setAuthError(null);
-    try {
-      // Simulate API delay - reduced for better UX
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // In a real app, this would send data to your backend
-      const user = { id: Date.now().toString(), email, name, isAdmin: false };
-      setUser(user);
-      localStorage.setItem('marcatUser', JSON.stringify(user));
-    } catch (error) {
-      setAuthError((error as Error).message);
-      throw error;
-    } finally {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user || null);
+      checkUserAdmin(session?.user?.id);
       setLoading(false);
-    }
-  };
+    });
 
-  const logout = useCallback(() => {
-    setUser(null);
-    localStorage.removeItem('marcatUser');
+    // Cleanup subscription when component unmounts
+    return () => subscription.unsubscribe();
   }, []);
 
-  const updateProfile = useCallback((updates: Partial<User>) => {
-    if (!user) return;
-    
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    localStorage.setItem('marcatUser', JSON.stringify(updatedUser));
-  }, [user]);
+  const checkUserAdmin = async (userId: string | undefined) => {
+    if (!userId) {
+      setIsAdmin(false);
+      return;
+    }
 
-  // Computed property to check if the user is an admin
-  const isAdmin = user?.isAdmin || false;
+    try {
+      const profile = await getUserProfile();
+      setIsAdmin(profile?.is_admin || false);
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+      setIsAdmin(false);
+    }
+  };
 
-  const contextValue = {
+  const signIn = async (email: string, password: string) => {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  const signUp = async (email: string, password: string, name: string) => {
+    try {
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  const updateProfile = async (data: { name?: string; avatar_url?: string }) => {
+    try {
+      if (!user) throw new Error("User must be logged in to update profile");
+      
+      const { error } = await supabase
+        .from('profiles')
+        .update(data)
+        .eq('id', user.id);
+      
+      if (error) throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  };
+
+  // Provide the context value
+  const value = {
     user,
+    isAdmin,
     loading,
-    authError,
-    login,
-    signup,
-    logout,
-    updateProfile,
-    isAdmin
+    signIn,
+    signUp,
+    signOut,
+    updateProfile
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

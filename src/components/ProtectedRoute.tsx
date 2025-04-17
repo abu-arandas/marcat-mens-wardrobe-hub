@@ -1,41 +1,40 @@
 
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { useToast } from "@/components/ui/use-toast";
 import LoadingSpinner from './LoadingSpinner';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  adminRequired?: boolean;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { toast } = useToast();
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  adminRequired = false 
+}) => {
+  const { user, loading, isAdmin } = useAuth();
 
-  useEffect(() => {
-    if (!loading && !user) {
-      toast({
-        variant: "destructive",
-        title: "Access denied",
-        description: "Please log in to access this page"
-      });
-      // Store the path they were trying to access
-      navigate('/login', { state: { from: location.pathname } });
-    }
-  }, [user, loading, navigate, toast, location]);
+  // Redirect unauthenticated users to login
+  if (!loading && !user) {
+    return <Navigate to="/login" replace />;
+  }
 
+  // For admin routes, check admin status
+  if (!loading && adminRequired && !isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  // Show loading state while authentication is being checked
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <LoadingSpinner size="lg" message="Checking authentication..." />
+        <LoadingSpinner size="lg" message="Loading..." />
       </div>
     );
   }
 
-  return user ? <>{children}</> : null;
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

@@ -1,42 +1,67 @@
 
 import React from 'react';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import HeroSection from '@/components/home/HeroSection';
-import StatsSection from '@/components/home/StatsSection';
 import FeaturesSection from '@/components/home/FeaturesSection';
+import StatsSection from '@/components/home/StatsSection';
+import FeaturedSection from '@/components/FeaturedSection';
 import OffersSection from '@/components/home/OffersSection';
 import CommissionSection from '@/components/home/CommissionSection';
 import NewsletterSection from '@/components/home/NewsletterSection';
-import FeaturedSection from '@/components/FeaturedSection';
-import { featuredProducts } from '@/data/mockData';
+import { useAllStores } from '@/hooks/useStores';
+import { useAllProducts, useOfferProducts, useCommissionProducts } from '@/hooks/useProducts';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
-const Index = () => {
+const Index: React.FC = () => {
+  const { data: stores, isLoading: storesLoading } = useAllStores();
+  const { data: products, isLoading: productsLoading } = useAllProducts();
+  const { data: offerProducts, isLoading: offersLoading } = useOfferProducts();
+  const { data: commissionProducts, isLoading: commissionLoading } = useCommissionProducts();
+
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <Navbar />
-      
+    <div className="flex flex-col min-h-screen">
       <HeroSection />
+      <FeaturesSection />
       <StatsSection />
       
-      {/* Featured Products */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <FeaturedSection 
-            title="New Arrivals" 
-            subtitle="Check out our latest men's fashion products"
-            products={featuredProducts}
-            viewAllLink="/products"
-          />
+      {storesLoading ? (
+        <div className="py-20 flex justify-center">
+          <LoadingSpinner size="lg" message="Loading stores..." />
         </div>
-      </section>
+      ) : (
+        <FeaturedSection
+          title="Featured Stores"
+          subtitle="Discover incredible shops with unique products"
+          stores={stores?.slice(0, 4)}
+          viewAllLink="/stores"
+        />
+      )}
+
+      {productsLoading ? (
+        <div className="py-20 flex justify-center">
+          <LoadingSpinner size="lg" message="Loading products..." />
+        </div>
+      ) : (
+        <FeaturedSection
+          title="New Arrivals"
+          subtitle="Check out our latest products"
+          products={products?.slice(0, 8)}
+          viewAllLink="/products"
+        />
+      )}
       
-      <FeaturesSection />
-      <OffersSection />
-      <CommissionSection />
+      {offersLoading ? (
+        <div className="py-10" />
+      ) : (
+        <OffersSection products={offerProducts} />
+      )}
+      
+      {commissionLoading ? (
+        <div className="py-10" />
+      ) : (
+        <CommissionSection products={commissionProducts} />
+      )}
+      
       <NewsletterSection />
-      
-      <Footer />
     </div>
   );
 };
